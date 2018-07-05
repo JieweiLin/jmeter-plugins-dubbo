@@ -321,7 +321,7 @@ public class DubboSample extends AbstractSampler {
         //构造请求数据
         res.setSamplerData(getSampleData());
         //调用dubbo
-        res.setResponseData(JsonUtils.toJson(callDubbo(res)));
+        res.setResponseData(JsonUtils.getJson(callDubbo(res)));
         //构造响应数据
         res.setDataType(SampleResult.TEXT);
         res.setResponseCodeOK();

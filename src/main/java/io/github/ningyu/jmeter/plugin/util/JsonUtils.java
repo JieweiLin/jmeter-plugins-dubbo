@@ -18,6 +18,8 @@ package io.github.ningyu.jmeter.plugin.util;
 
 import java.lang.reflect.Type;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import org.apache.jorphan.logging.LoggingManager;
 import org.apache.log.Logger;
 
@@ -61,4 +63,24 @@ public class JsonUtils {
 		}
 		return null;
 	}
+
+	public static String getJson(Object obj){
+        return JSON.toJSONStringWithDateFormat(obj, "yyyy-MM-dd hh:mm:ss", SerializerFeature.DisableCircularReferenceDetect);
+    }
+
+    public static <T> T readValue(String json, Class<? extends T> cls){
+	    try {
+	        return JSON.parseObject(json, cls);
+        } catch (Exception e){
+	        return null;
+        }
+    }
+
+    public static <T> T readValue(String json, Type type){
+        try {
+            return JSON.parseObject(json, type, null);
+        } catch (Exception e) {
+            return null;
+        }
+    }
 }

@@ -54,7 +54,7 @@ public class MethodArgument implements Serializable {
 
 	@Override
 	public String toString() {
-		return JsonUtils.toJson(this);
+		return JsonUtils.getJson(this);
 	}
 
 	@Override
