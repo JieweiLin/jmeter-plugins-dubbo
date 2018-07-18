@@ -165,6 +165,7 @@ public class DubboSampleGui extends AbstractSamplerGui {
         //Group
         JLabel groupLable = new JLabel("Group:", SwingConstants.RIGHT);
         groupText = new JTextField(textColumns);
+        groupText.setText(DubboSample.DEFAULT_GROUP);
         groupLable.setLabelFor(groupText);
         h.add(groupLable);
         h.add(groupText);
@@ -375,14 +376,14 @@ public class DubboSampleGui extends AbstractSamplerGui {
     public void clearGui() {
         log.debug("清空gui数据");
         super.clearGui();
-        registryProtocolText.setSelectedIndex(0);
+        registryProtocolText.setSelectedIndex(1);
         rpcProtocolText.setSelectedIndex(0);
         addressText.setText("");
         timeoutText.setText(DubboSample.DEFAULT_TIMEOUT);
         versionText.setText(DubboSample.DEFAULT_VERSION);
         retriesText.setText(DubboSample.DEFAULT_RETRIES);
         clusterText.setText(DubboSample.DEFAULT_CLUSTER);
-        groupText.setText("");
+        groupText.setText(DubboSample.DEFAULT_GROUP);
         connectionsText.setText(DubboSample.DEFAULT_CONNECTIONS);
         loadbalanceText.setSelectedIndex(0);
         asyncText.setSelectedIndex(0);

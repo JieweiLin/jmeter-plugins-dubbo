@@ -16,16 +16,16 @@
  */
 package io.github.ningyu.jmeter.plugin.util;
 
+import com.google.common.reflect.TypeToken;
 import io.github.ningyu.jmeter.plugin.dubbo.sample.MethodArgument;
+import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.commons.lang3.StringUtils;
-
-import com.google.common.reflect.TypeToken;
+import java.util.Date;
 
 /**
  * ClassUtils
@@ -200,7 +200,14 @@ public class ClassUtils {
 					|| className.equals("Boolean[]")) {
 				paramterTypeList.add("java.lang.Boolean[]");
 				parameterValuesList.add(isBlank(arg.getParamValue()) ? null : JsonUtils.readValue(arg.getParamValue(), new TypeToken<Boolean[]>() {}.getType()));
-			} else {
+			} else if (className.equals("java.sql.Timestamp")){
+				paramterTypeList.add("java.sql.Timestamp");
+				parameterValuesList.add(isBlank(arg.getParamValue()) ? null : new Timestamp(Long.parseLong(arg.getParamValue())));
+			}else if (className.equals("java.util.Date")
+                    || className.equals("Date")) {
+                paramterTypeList.add("java.util.Date");
+                parameterValuesList.add(isBlank(arg.getParamValue()) ? null :  new Date(Long.parseLong(arg.getParamValue())));
+            } else {
 				if (className.endsWith("[]")) {
 					List<?> list = null;
 					if (!isBlank(arg.getParamValue())) {
@@ -212,7 +219,11 @@ public class ClassUtils {
 					try {
 						Class<?> clazz = Class.forName(className);
 						paramterTypeList.add(arg.getParamType());
-						parameterValuesList.add(isBlank(arg.getParamValue()) ? null : JsonUtils.readValue(arg.getParamValue(), clazz));
+						if (clazz.isEnum()){
+						    parameterValuesList.add(isBlank(arg.getParamValue()) ? null : JsonUtils.formJson(arg.getParamValue(), clazz));
+                        }else {
+                            parameterValuesList.add(isBlank(arg.getParamValue()) ? null : JsonUtils.readValue(arg.getParamValue(), clazz));
+                        }
 					} catch (ClassNotFoundException e) {
 						//不是jdk或者lib下的类，使用通用map格式反序列化值
 						paramterTypeList.add(arg.getParamType());

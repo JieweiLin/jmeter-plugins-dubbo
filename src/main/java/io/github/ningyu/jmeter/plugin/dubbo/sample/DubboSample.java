@@ -16,6 +16,7 @@
  */
 package io.github.ningyu.jmeter.plugin.dubbo.sample;
 
+import io.github.ningyu.jmeter.plugin.common.Result;
 import io.github.ningyu.jmeter.plugin.util.ClassUtils;
 import io.github.ningyu.jmeter.plugin.util.Constants;
 import io.github.ningyu.jmeter.plugin.util.JsonUtils;
@@ -67,11 +68,12 @@ public class DubboSample extends AbstractSampler {
     public static String FIELD_DUBBO_METHOD = "FIELD_DUBBO_METHOD";
     public static String FIELD_DUBBO_METHOD_ARGS = "FIELD_DUBBO_METHOD_ARGS";
     public static String FIELD_DUBBO_METHOD_ARGS_SIZE = "FIELD_DUBBO_METHOD_ARGS_SIZE";
-    public static String DEFAULT_TIMEOUT = "1000";
-    public static String DEFAULT_VERSION = "1.0.0";
-    public static String DEFAULT_RETRIES = "0";
+    public static String DEFAULT_TIMEOUT = "3000";
+    public static String DEFAULT_VERSION = "";
+    public static String DEFAULT_RETRIES = "1";
     public static String DEFAULT_CLUSTER = "failfast";
-    public static String DEFAULT_CONNECTIONS = "100";
+    public static String DEFAULT_GROUP = "test";
+    public static String DEFAULT_CONNECTIONS = "1";
 
     /**
      * get Registry Protocol
@@ -430,9 +432,13 @@ public class DubboSample extends AbstractSampler {
             parameterTypes = paramterTypeList.toArray(new String[paramterTypeList.size()]);
             parameterValues = parameterValuesList.toArray(new Object[parameterValuesList.size()]);
             Object result = null;
+            Result result1 = new Result();
 			try {
 				result = genericService.$invoke(getMethod(), parameterTypes, parameterValues);
+				log.info("result:" + result);
 				res.setSuccessful(true);
+				result1.setCode(10000);
+				result1.setBody(result);
 			} catch (Exception e) {
 				log.error("接口返回异常：", e);
 				//TODO
@@ -440,8 +446,10 @@ public class DubboSample extends AbstractSampler {
 				//比如接口有一些校验性质的异常，不代表这个操作是错误的，这样就可以灵活的判断，不至于正常的校验返回导致测试用例error百分比的不真实
 				res.setSuccessful(true);
 				result = e;
+				result1.setCode(-1);
+				result1.setBody(result);
 			}
-            return result;
+            return result1;
         } catch (Exception e) {
             log.error("未知异常：", e);
             res.setSuccessful(false);
