@@ -227,7 +227,7 @@ public class ClassUtils {
 					} catch (ClassNotFoundException e) {
 						//不是jdk或者lib下的类，使用通用map格式反序列化值
 						paramterTypeList.add(arg.getParamType());
-						parameterValuesList.add(JsonUtils.readValue(arg.getParamValue(), new TypeToken<Map<String,Object>>() {}.getType()));
+						parameterValuesList.add(isBlank(arg.getParamValue()) ? null : JsonUtils.readValue(arg.getParamValue(), new TypeToken<Map<String,Object>>() {}.getType()));
 					}
 				}
 			}
