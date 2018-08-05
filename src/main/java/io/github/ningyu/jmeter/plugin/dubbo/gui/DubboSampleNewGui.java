@@ -1,8 +1,10 @@
 package io.github.ningyu.jmeter.plugin.dubbo.gui;
 
 import io.github.ningyu.jmeter.plugin.dubbo.sample.DubboSample;
+import io.github.ningyu.jmeter.plugin.dubbo.sample.DubboSampleNew;
 import org.apache.jmeter.gui.util.HorizontalPanel;
 import org.apache.jmeter.gui.util.JSyntaxTextArea;
+import org.apache.jmeter.gui.util.JTextScrollPane;
 import org.apache.jmeter.gui.util.VerticalPanel;
 import org.apache.jmeter.samplers.gui.AbstractSamplerGui;
 import org.apache.jmeter.testelement.TestElement;
@@ -177,7 +179,7 @@ public class DubboSampleNewGui extends AbstractSamplerGui {
         JLabel argsLabel = new JLabel("    Args:", SwingConstants.RIGHT);
         argsLabel.setLabelFor(argsBodyContent);
         argsPanel.add(argsLabel);
-        argsPanel.add(argsBodyContent);
+        argsPanel.add(JTextScrollPane.getInstance(argsBodyContent));
         interfaceSettings.add(argsPanel);
 
         settingPanel.add(registrySettings);
@@ -195,7 +197,29 @@ public class DubboSampleNewGui extends AbstractSamplerGui {
     public void configure(TestElement element){
         super.configure(element);
         log.info("赋值给gui");
+        DubboSampleNew sample = (DubboSampleNew) element;
+        registryProtocolText.setSelectedItem(sample.getRegistryProtocol());
+        rpcProtocolText.setSelectedItem(sample.getRpcProtocol());
+        addressText.setText(sample.getAddress());
+        versionText.setText(sample.getVersion());
+        timeoutText.setText(sample.getTimeout());
+        retriesText.setText(sample.getRetries());
+        groupText.setText(sample.getGroup());
+        connectionsText.setText(sample.getConnections());
+        loadbalanceText.setSelectedItem(sample.getLoadbalance());
+        asyncText.setSelectedItem(sample.getAsync());
+        clusterText.setText(sample.getCluster());
+        interfaceText.setText(sample.getInterface());
+        methodText.setText(sample.getMethod());
+        argsBodyContent.setInitialText(sample.getArgs());
+    }
 
+    @Override
+    public TestElement createTestElement() {
+        log.info("创建sample对象");
+        DubboSampleNew sampleNew = new DubboSampleNew();
+        modifyTestElement(sampleNew);
+        return sampleNew;
     }
 
     @Override
@@ -204,14 +228,48 @@ public class DubboSampleNewGui extends AbstractSamplerGui {
     }
 
     @Override
-    public TestElement createTestElement() {
-        return null;
+    public void modifyTestElement(TestElement testElement) {
+        log.info("gui数据赋值给sample");
+        super.configureTestElement(testElement);
+        DubboSampleNew sampleNew = (DubboSampleNew) testElement;
+        sampleNew.setRegistryProtocol(registryProtocolText.getSelectedItem().toString());
+        sampleNew.setRpcProtocol(rpcProtocolText.getSelectedItem().toString());
+        sampleNew.setAddress(addressText.getText());
+        sampleNew.setTimeout(timeoutText.getText());
+        sampleNew.setVersion(versionText.getText());
+        sampleNew.setRetries(retriesText.getText());
+        sampleNew.setGroup(groupText.getText());
+        sampleNew.setConnections(connectionsText.getText());
+        sampleNew.setLoadbalance(loadbalanceText.getSelectedItem().toString());
+        sampleNew.setAsync(asyncText.getSelectedItem().toString());
+        sampleNew.setCluster(clusterText.getText());
+        sampleNew.setInterfaceName(interfaceText.getText());
+        sampleNew.setMethod(methodText.getText());
+        sampleNew.setArgs(argsBodyContent.getText());
     }
 
     @Override
-    public void modifyTestElement(TestElement testElement) {
-
+    public void clearGui() {
+        log.info("清空gui数据");
+        super.clearGui();
+        registryProtocolText.setSelectedIndex(1);
+        rpcProtocolText.setSelectedIndex(0);
+        addressText.setText("");
+        timeoutText.setText(DubboSample.DEFAULT_TIMEOUT);
+        versionText.setText(DubboSample.DEFAULT_VERSION);
+        retriesText.setText(DubboSample.DEFAULT_RETRIES);
+        clusterText.setText(DubboSample.DEFAULT_CLUSTER);
+        groupText.setText(DubboSample.DEFAULT_GROUP);
+        connectionsText.setText(DubboSample.DEFAULT_CONNECTIONS);
+        loadbalanceText.setSelectedIndex(0);
+        asyncText.setSelectedIndex(0);
+        interfaceText.setText("");
+        methodText.setText("");
+        argsBodyContent.setInitialText("");
     }
 
-
+    @Override
+    public String getStaticLabel() {
+        return "Dubbo Sample JSON";
+    }
 }
