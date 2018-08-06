@@ -21,6 +21,7 @@ import org.apache.jmeter.testelement.property.StringProperty;
 import org.apache.jorphan.logging.LoggingManager;
 import org.apache.log.Logger;
 
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -170,7 +171,6 @@ public class DubboSampleNew extends AbstractSampler {
 
     public List<MethodArgument> getMethodArgs() {
         String methodArgs = getArgs();
-        log.info("methodArgs:"+methodArgs);
         int size = 0;
         JSONArray jsonArray = null;
         List<MethodArgument> result = Lists.newArrayList();
@@ -184,7 +184,6 @@ public class DubboSampleNew extends AbstractSampler {
                 size = jsonArray.size();
             }
         }
-        log.info("size:"+size);
         for (int i = 0; i < size; i++) {
             JSONObject jsonObject = jsonArray.getJSONObject(i);
             if (jsonObject.keySet().size() == 1) {
@@ -196,7 +195,6 @@ public class DubboSampleNew extends AbstractSampler {
                 }
             }
         }
-        log.info("result:"+JsonUtils.getJson(result));
         return result;
     }
 
@@ -206,7 +204,7 @@ public class DubboSampleNew extends AbstractSampler {
         result.setSampleLabel(getName());
         result.sampleStart();
         result.setSamplerData(getSampleData());
-        result.setResponseData(JsonUtils.getJson(callDubbo(result)).getBytes());
+        result.setResponseData(JsonUtils.getJson(callDubbo(result)).getBytes(Charset.forName("UTF-8")));
         result.setDataType(SampleResult.TEXT);
         result.setResponseCodeOK();
         result.setResponseMessageOK();
