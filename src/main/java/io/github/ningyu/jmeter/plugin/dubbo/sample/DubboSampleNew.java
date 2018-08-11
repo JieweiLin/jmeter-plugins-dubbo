@@ -189,7 +189,13 @@ public class DubboSampleNew extends AbstractSampler {
             if (jsonObject.keySet().size() == 1) {
                 for (String key : jsonObject.keySet()) {
                     String paramType = key;
-                    String paramValue = (String) jsonObject.get(key);
+                    String paramValue = "";
+                    if (paramType.equals("String") || paramType.equals("string") || paramType.equals("java.lang.String")) {
+                        paramValue = (String) jsonObject.get(key);
+                    } else {
+                        paramValue = JsonUtils.getJson(jsonObject.get(key));
+                    }
+                    log.info("paramValue：" + paramValue);
                     MethodArgument argument = new MethodArgument(paramType, paramValue);
                     result.add(argument);
                 }
@@ -311,6 +317,9 @@ public class DubboSampleNew extends AbstractSampler {
             Object result = null;
             Result result1 = new Result();
             try {
+                log.info("getMethod():"+getMethod());
+                log.info("Types:"+parameterTypes.length);
+                log.info("Values:"+parameterValues.length);
                 result = genericService.$invoke(getMethod(), parameterTypes, parameterValues);
                 log.info("result:" + result);
                 res.setSuccessful(true);
@@ -322,7 +331,7 @@ public class DubboSampleNew extends AbstractSampler {
                 //当接口返回异常时，sample标识为successful，通过响应内容做断言来判断是否标识sample错误，因为sample的错误会统计到用例的error百分比内。
                 //比如接口有一些校验性质的异常，不代表这个操作是错误的，这样就可以灵活的判断，不至于正常的校验返回导致测试用例error百分比的不真实
                 res.setSuccessful(true);
-                result = e;
+                result = e.getMessage();
                 result1.setCode(-1);
                 result1.setBody(result);
             }
