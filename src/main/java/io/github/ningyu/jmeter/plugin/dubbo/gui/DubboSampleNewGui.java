@@ -196,7 +196,7 @@ public class DubboSampleNewGui extends AbstractSamplerGui {
     @Override
     public void configure(TestElement element){
         super.configure(element);
-        log.info("赋值给gui");
+        log.debug("赋值给gui");
         DubboSampleNew sample = (DubboSampleNew) element;
         registryProtocolText.setSelectedItem(sample.getRegistryProtocol());
         rpcProtocolText.setSelectedItem(sample.getRpcProtocol());
@@ -216,7 +216,7 @@ public class DubboSampleNewGui extends AbstractSamplerGui {
 
     @Override
     public TestElement createTestElement() {
-        log.info("创建sample对象");
+        log.debug("创建sample对象");
         DubboSampleNew sampleNew = new DubboSampleNew();
         modifyTestElement(sampleNew);
         return sampleNew;
@@ -229,7 +229,7 @@ public class DubboSampleNewGui extends AbstractSamplerGui {
 
     @Override
     public void modifyTestElement(TestElement testElement) {
-        log.info("gui数据赋值给sample");
+        log.debug("gui数据赋值给sample");
         super.configureTestElement(testElement);
         DubboSampleNew sampleNew = (DubboSampleNew) testElement;
         sampleNew.setRegistryProtocol(registryProtocolText.getSelectedItem().toString());
@@ -250,7 +250,7 @@ public class DubboSampleNewGui extends AbstractSamplerGui {
 
     @Override
     public void clearGui() {
-        log.info("清空gui数据");
+        log.debug("清空gui数据");
         super.clearGui();
         registryProtocolText.setSelectedIndex(1);
         rpcProtocolText.setSelectedIndex(0);

@@ -23,9 +23,9 @@ import org.apache.commons.lang3.StringUtils;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Date;
 
 /**
  * ClassUtils
@@ -207,6 +207,17 @@ public class ClassUtils {
                     || className.equals("Date")) {
                 paramterTypeList.add("java.util.Date");
                 parameterValuesList.add(isBlank(arg.getParamValue()) ? null :  new Date(Long.parseLong(arg.getParamValue())));
+            }else if(className.contains("/")){
+			    String[] clas = className.split("/");
+			    String type = clas[0];
+			    String cla = clas[1];
+			    Class clazz = Class.forName(cla);
+			    List<?> list = null;
+			    if (!isBlank(arg.getParamValue())){
+                    list = JsonUtils.readValueToList(arg.getParamValue(), clazz);
+                }
+                paramterTypeList.add(type);
+			    parameterValuesList.add(list == null ? null : list.toArray());
             } else {
 				if (className.endsWith("[]")) {
 					List<?> list = null;

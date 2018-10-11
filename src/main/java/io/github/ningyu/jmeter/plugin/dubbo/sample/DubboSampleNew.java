@@ -169,37 +169,44 @@ public class DubboSampleNew extends AbstractSampler {
         this.setProperty(new StringProperty(FIELD_DUBBO_METHOD_ARGS, args));
     }
 
-    public List<MethodArgument> getMethodArgs() {
-        String methodArgs = getArgs();
-        int size = 0;
-        JSONArray jsonArray = null;
-        List<MethodArgument> result = Lists.newArrayList();
-        if (StringUtils.isNotBlank(methodArgs)) {
-            try {
-                jsonArray = JSON.parseArray(methodArgs);
-            } catch (Exception e) {
-                jsonArray = JSON.parseArray("[]");
+    public List<MethodArgument> getMethodArgs(boolean b) {
+        List<MethodArgument> result = null;
+        try {
+            String methodArgs = getArgs();
+            if (b){
+                log.info(getName() + "\nargs:" + methodArgs);
             }
-            if (jsonArray.size() > 0) {
-                size = jsonArray.size();
-            }
-        }
-        for (int i = 0; i < size; i++) {
-            JSONObject jsonObject = jsonArray.getJSONObject(i);
-            if (jsonObject.keySet().size() == 1) {
-                for (String key : jsonObject.keySet()) {
-                    String paramType = key;
-                    String paramValue = "";
-                    if (paramType.equals("String") || paramType.equals("string") || paramType.equals("java.lang.String")) {
-                        paramValue = (String) jsonObject.get(key);
-                    } else {
-                        paramValue = JsonUtils.getJson(jsonObject.get(key));
-                    }
-                    log.info("paramValue：" + paramValue);
-                    MethodArgument argument = new MethodArgument(paramType, paramValue);
-                    result.add(argument);
+            int size = 0;
+            JSONArray jsonArray = null;
+            result = Lists.newArrayList();
+            if (StringUtils.isNotBlank(methodArgs)) {
+                try {
+                    jsonArray = JSON.parseArray(methodArgs);
+                } catch (Exception e) {
+                    jsonArray = JSON.parseArray("[]");
+                }
+                if (jsonArray.size() > 0) {
+                    size = jsonArray.size();
                 }
             }
+            for (int i = 0; i < size; i++) {
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                if (jsonObject.keySet().size() == 1) {
+                    for (String key : jsonObject.keySet()) {
+                        String paramType = key;
+                        String paramValue = "";
+                        if (paramType.equals("String") || paramType.equals("string") || paramType.equals("java.lang.String")) {
+                            paramValue = (String) jsonObject.get(key);
+                        } else {
+                            paramValue = JsonUtils.getJson(jsonObject.get(key));
+                        }
+                        MethodArgument argument = new MethodArgument(paramType, paramValue);
+                        result.add(argument);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            log.info("error:" + e);
         }
         return result;
     }
@@ -233,7 +240,7 @@ public class DubboSampleNew extends AbstractSampler {
         sb.append("Async: ").append(getAsync()).append("\n");
         sb.append("Interface: ").append(getInterface()).append("\n");
         sb.append("Method: ").append(getMethod()).append("\n");
-        sb.append("Method Args: ").append(getMethodArgs().toString());
+        sb.append("Method Args: ").append(getMethodArgs(false).toString());
         return sb.toString();
     }
 
@@ -305,10 +312,10 @@ public class DubboSampleNew extends AbstractSampler {
             GenericService genericService = (GenericService) cache.get(reference);
             String[] parameterTypes = null;
             Object[] parameterValues = null;
-            List<MethodArgument> args = getMethodArgs();
-            List<String> paramterTypeList =  new ArrayList<String>();
+            List<MethodArgument> args = getMethodArgs(true);
+            List<String> paramterTypeList = new ArrayList<String>();
             List<Object> parameterValuesList = new ArrayList<Object>();
-            for(MethodArgument arg : args) {
+            for (MethodArgument arg : args) {
                 ClassUtils.parseParameter(paramterTypeList, parameterValuesList, arg);
             }
             //发起调用
@@ -317,11 +324,7 @@ public class DubboSampleNew extends AbstractSampler {
             Object result = null;
             Result result1 = new Result();
             try {
-                log.info("getMethod():"+getMethod());
-                log.info("Types:"+parameterTypes.length);
-                log.info("Values:"+parameterValues.length);
                 result = genericService.$invoke(getMethod(), parameterTypes, parameterValues);
-                log.info("result:" + result);
                 res.setSuccessful(true);
                 result1.setCode(10000);
                 result1.setBody(result);

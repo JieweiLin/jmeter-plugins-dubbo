@@ -21,17 +21,16 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
-import org.apache.jorphan.logging.LoggingManager;
-import org.apache.log.Logger;
 
 import java.lang.reflect.Type;
+import java.util.List;
 
 /**
  * JsonUtils
  */
 public class JsonUtils {
 
-	private static final Logger logger = LoggingManager.getLoggerForClass();
+	//private static final Logger logger = LoggingManager.getLoggerForClass();
 
 	private static final Gson gson = new GsonBuilder().serializeNulls().create();
 
@@ -47,8 +46,7 @@ public class JsonUtils {
 		try {
 			return gson.fromJson(json, classOfT);
 		} catch (JsonSyntaxException e) {
-			logger.error("json to class[" + classOfT.getName() + "] is error!",
-					e);
+			//logger.error("json to class[" + classOfT.getName() + "] is error!",e);
 		}
 		return null;
 	}
@@ -57,8 +55,7 @@ public class JsonUtils {
 		try {
 			return gson.fromJson(json, type);
 		} catch (JsonSyntaxException e) {
-			logger.error("json to class[" + type.getClass().getName()
-					+ "] is error!", e);
+			//logger.error("json to class[" + type.getClass().getName() + "] is error!", e);
 		}
 		return null;
 	}
@@ -79,6 +76,14 @@ public class JsonUtils {
         try {
             return JSON.parseObject(json, type, null);
         } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static <T>List<? extends T> readValueToList(String json, Class<? extends T> cls){
+        try {
+            return JSON.parseArray(json, cls);
+        } catch (Exception e){
             return null;
         }
     }
