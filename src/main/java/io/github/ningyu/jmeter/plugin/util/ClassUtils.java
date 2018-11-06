@@ -222,7 +222,7 @@ public class ClassUtils {
 				if (className.endsWith("[]")) {
 					List<?> list = null;
 					if (!isBlank(arg.getParamValue())) {
-						list = JsonUtils.readValue(arg.getParamValue(), new TypeToken<List<?>>() {}.getType());
+						list = JsonUtils.formJson(arg.getParamValue(), new TypeToken<List<?>>() {}.getType());
 					}
 					paramterTypeList.add(arg.getParamType());
 					parameterValuesList.add(list == null ? null : list.toArray());
